@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diya's Food Cart</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4, #feca57, #ff9ff3);
+            padding: 30px 20px;
+            text-align: center;
+            position: relative;
+        }
+        
+        .balloon-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 2.5rem;
+            color: white;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+            animation: float 3s ease-in-out infinite;
+        }
+        
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        
+        .subtitle {
+            color: white;
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+        
+        .menu-section {
+            padding: 30px 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 20px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .menu-item {
+            display: flex;
+            align-items: center;
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+        
+        .menu-item:hover {
+            transform: translateY(-2px);
+        }
+        
+        .item-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin-right: 20px;
+            flex-shrink: 0;
+        }
+        
+        .item-details {
+            flex: 1;
+        }
+        
+        .item-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .item-price {
+            font-size: 1.1rem;
+            color: #28a745;
+            font-weight: bold;
+        }
+        
+        .add-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(40, 167, 69, 0.3);
+        }
+        
+        .add-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(40, 167, 69, 0.4);
+        }
+        
+        .cart-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .cart-item:last-child {
+            border-bottom: none;
+        }
+        
+        .cart-total {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            text-align: right;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 2px solid #dee2e6;
+        }
+        
+        .payment-section {
+            padding: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .form-group input:focus {
+            outline: none;
+            border-color: #4ecdc4;
+        }
+        
+        .pay-btn {
+            background: linear-gradient(45deg, #007bff, #0056b3);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            width: 100%;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        }
+        
+        .pay-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
+        }
+        
+        .receipt {
+            background: white;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .receipt-header {
+            text-align: center;
+            border-bottom: 2px solid #e9ecef;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .receipt-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
+        }
+        
+        .receipt-date {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .receipt-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .receipt-total {
+            border-top: 2px solid #e9ecef;
+            padding-top: 15px;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        
+        .receipt-change {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+        
+        .download-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        
+        .download-btn:hover {
+            transform: translateY(-2px);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        @media (max-width: 480px) {
+            .balloon-title {
+                font-size: 2rem;
+            }
+            
+            .menu-item {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .item-image {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="balloon-title">Diya's Food Cart</h1>
+            <p class="subtitle">Delicious treats made with love! 🍝🍋</p>
+        </div>
+        
+        <div class="menu-section">
+            <h2 class="section-title">Our Menu</h2>
+            
+            <div class="menu-item">
+                <div class="item-image">🍝</div>
+                <div class="item-details">
+                    <div class="item-name">Pasta</div>
+                    <div class="item-price">₹150</div>
+                </div>
+                <button class="add-btn" onclick="addToCart('Pasta', 150)">Add to Cart</button>
+            </div>
+            
+            <div class="menu-item">
+                <div class="item-image">🍋</div>
+                <div class="item-details">
+                    <div class="item-name">Lemonade</div>
+                    <div class="item-price">₹75</div>
+                </div>
+                <button class="add-btn" onclick="addToCart('Lemonade', 75)">Add to Cart</button>
+            </div>
+        </div>
+        
+        <div class="cart-section">
+            <h2 class="section-title">Your Cart</h2>
+            <div id="cart-items"></div>
+            <div class="cart-total" id="cart-total">Total: ₹0</div>
+        </div>
+        
+        <div class="payment-section">
+            <h2 class="section-title">Payment</h2>
+            
+            <div class="form-group">
+                <label for="customer-name">Your Name:</label>
+                <input type="text" id="customer-name" placeholder="Enter your name">
+            </div>
+            
+            <div class="form-group">
+                <label for="payment-amount">Amount You're Paying (₹):</label>
+                <input type="number" id="payment-amount" placeholder="Enter amount">
+            </div>
+            
+            <button class="pay-btn" onclick="processPayment()">Pay & Get Receipt</button>
+        </div>
+        
+        <div class="receipt" id="receipt">
+            <div class="receipt-header">
+                <div class="receipt-title">Diya's Food Cart</div>
+                <div class="receipt-date" id="receipt-date"></div>
+            </div>
+            
+            <div id="receipt-items"></div>
+            
+            <div class="receipt-total" id="receipt-total"></div>
+            
+            <div class="receipt-change" id="receipt-change"></div>
+            
+            <button class="download-btn" onclick="downloadReceipt()">Download Receipt (PNG)</button>
+        </div>
+    </div>
+
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
+    <script>
+        let cart = [];
+        let total = 0;
+        
+        function addToCart(itemName, price) {
+            const existingItem = cart.find(item => item.name === itemName);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    name: itemName,
+                    price: price,
+                    quantity: 1
+                });
+            }
+            
+            updateCart();
+        }
+        
+        function updateCart() {
+            const cartContainer = document.getElementById('cart-items');
+            const totalElement = document.getElementById('cart-total');
+            
+            cartContainer.innerHTML = '';
+            total = 0;
+            
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                const cartItem = document.createElement('div');
+                cartItem.className = 'cart-item';
+                cartItem.innerHTML = `
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>₹${itemTotal}</span>
+                `;
+                cartContainer.appendChild(cartItem);
+            });
+            
+            totalElement.textContent = `Total: ₹${total}`;
+        }
+        
+        function processPayment() {
+            const customerName = document.getElementById('customer-name').value.trim();
+            const paymentAmount = parseInt(document.getElementById('payment-amount').value);
+            
+            if (!customerName) {
+                alert('Please enter your name!');
+                return;
+            }
+            
+            if (!paymentAmount || paymentAmount < total) {
+                alert(`Please pay at least ₹${total}!`);
+                return;
+            }
+            
+            const change = paymentAmount - total;
+            const changeBreakdown = calculateChange(change);
+            
+            // Generate receipt
+            generateReceipt(customerName, paymentAmount, change, changeBreakdown);
+            
+            // Show receipt
+            document.getElementById('receipt').style.display = 'block';
+            
+            // Scroll to receipt
+            document.getElementById('receipt').scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function calculateChange(change) {
+            const denominations = [50, 20, 10, 5, 2, 1];
+            const breakdown = [];
+            let remaining = change;
+            
+            for (let denom of denominations) {
+                if (remaining >= denom) {
+                    const count = Math.floor(remaining / denom);
+                    breakdown.push({ denomination: denom, count: count });
+                    remaining = remaining % denom;
+                }
+            }
+            
+            return breakdown;
+        }
+        
+        function generateReceipt(customerName, paymentAmount, change, changeBreakdown) {
+            const receiptItems = document.getElementById('receipt-items');
+            const receiptTotal = document.getElementById('receipt-total');
+            const receiptChange = document.getElementById('receipt-change');
+            const receiptDate = document.getElementById('receipt-date');
+            
+            // Set date
+            receiptDate.textContent = new Date().toLocaleDateString('en-IN') + ' ' + new Date().toLocaleTimeString('en-IN');
+            
+            // Add items
+            receiptItems.innerHTML = '';
+            cart.forEach(item => {
+                const itemTotal = item.price * item.quantity;
+                const receiptItem = document.createElement('div');
+                receiptItem.className = 'receipt-item';
+                receiptItem.innerHTML = `
+                    <span>${item.name} x${item.quantity}</span>
+                    <span>₹${itemTotal}</span>
+                `;
+                receiptItems.appendChild(receiptItem);
+            });
+            
+            // Add totals
+            receiptTotal.innerHTML = `
+                <div class="receipt-item">
+                    <span>Subtotal:</span>
+                    <span>₹${total}</span>
+                </div>
+                <div class="receipt-item">
+                    <span>Amount Paid:</span>
+                    <span>₹${paymentAmount}</span>
+                </div>
+                <div class="receipt-item">
+                    <span>Change:</span>
+                    <span>₹${change}</span>
+                </div>
+            `;
+            
+            // Add change breakdown
+            let changeText = '<strong>Change Breakdown:</strong><br>';
+            changeBreakdown.forEach(item => {
+                if (item.denomination >= 10) {
+                    changeText += `${item.count} × ₹${item.denomination} note<br>`;
+                } else {
+                    changeText += `${item.count} × ₹${item.denomination} coin<br>`;
+                }
+            });
+            receiptChange.innerHTML = changeText;
+        }
+        
+        function downloadReceipt() {
+            const receiptElement = document.getElementById('receipt');
+            
+            html2canvas(receiptElement, {
+                backgroundColor: '#ffffff',
+                scale: 2,
+                width: receiptElement.offsetWidth,
+                height: receiptElement.offsetHeight
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = `diya-food-cart-receipt-${Date.now()}.png`;
+                link.href = canvas.toDataURL();
+                link.click();
+            });
+        }
+    </script>
+</body>
+</html>
