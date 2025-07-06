@@ -114,6 +114,40 @@
             font-weight: bold;
         }
         
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .quantity-btn {
+            background: linear-gradient(45deg, #28a745, #20c997);
+            color: white;
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .quantity-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .quantity-display {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #333;
+            min-width: 30px;
+            text-align: center;
+        }
+        
         .add-btn {
             background: linear-gradient(45deg, #28a745, #20c997);
             color: white;
@@ -187,6 +221,23 @@
         .form-group input:focus {
             outline: none;
             border-color: #4ecdc4;
+        }
+        
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        .checkbox-group input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        
+        .checkbox-group label {
+            margin: 0;
+            cursor: pointer;
         }
         
         .pay-btn {
@@ -291,6 +342,10 @@
                 margin-right: 0;
                 margin-bottom: 15px;
             }
+            
+            .quantity-controls {
+                margin-top: 10px;
+            }
         }
     </style>
 </head>
@@ -310,7 +365,12 @@
                     <div class="item-name">Pasta</div>
                     <div class="item-price">₹150</div>
                 </div>
-                <button class="add-btn" onclick="addToCart('Pasta', 150)">Add to Cart</button>
+                <div class="quantity-controls" id="pasta-controls" style="display: none;">
+                    <button class="quantity-btn" onclick="updateQuantity('Pasta', -1)">-</button>
+                    <div class="quantity-display" id="pasta-quantity">0</div>
+                    <button class="quantity-btn" onclick="updateQuantity('Pasta', 1)">+</button>
+                </div>
+                <button class="add-btn" id="pasta-btn" onclick="addToCart('Pasta', 150)">Add to Cart</button>
             </div>
             
             <div class="menu-item">
@@ -319,7 +379,40 @@
                     <div class="item-name">Lemonade</div>
                     <div class="item-price">₹75</div>
                 </div>
-                <button class="add-btn" onclick="addToCart('Lemonade', 75)">Add to Cart</button>
+                <div class="quantity-controls" id="lemonade-controls" style="display: none;">
+                    <button class="quantity-btn" onclick="updateQuantity('Lemonade', -1)">-</button>
+                    <div class="quantity-display" id="lemonade-quantity">0</div>
+                    <button class="quantity-btn" onclick="updateQuantity('Lemonade', 1)">+</button>
+                </div>
+                <button class="add-btn" id="lemonade-btn" onclick="addToCart('Lemonade', 75)">Add to Cart</button>
+            </div>
+            
+            <div class="menu-item">
+                <div class="item-image">🌶️</div>
+                <div class="item-details">
+                    <div class="item-name">Masala Lemonade</div>
+                    <div class="item-price">₹80</div>
+                </div>
+                <div class="quantity-controls" id="masala-lemonade-controls" style="display: none;">
+                    <button class="quantity-btn" onclick="updateQuantity('Masala Lemonade', -1)">-</button>
+                    <div class="quantity-display" id="masala-lemonade-quantity">0</div>
+                    <button class="quantity-btn" onclick="updateQuantity('Masala Lemonade', 1)">+</button>
+                </div>
+                <button class="add-btn" id="masala-lemonade-btn" onclick="addToCart('Masala Lemonade', 80)">Add to Cart</button>
+            </div>
+            
+            <div class="menu-item">
+                <div class="item-image">🍧</div>
+                <div class="item-details">
+                    <div class="item-name">Chuski</div>
+                    <div class="item-price">₹90</div>
+                </div>
+                <div class="quantity-controls" id="chuski-controls" style="display: none;">
+                    <button class="quantity-btn" onclick="updateQuantity('Chuski', -1)">-</button>
+                    <div class="quantity-display" id="chuski-quantity">0</div>
+                    <button class="quantity-btn" onclick="updateQuantity('Chuski', 1)">+</button>
+                </div>
+                <button class="add-btn" id="chuski-btn" onclick="addToCart('Chuski', 90)">Add to Cart</button>
             </div>
         </div>
         
@@ -335,6 +428,11 @@
             <div class="form-group">
                 <label for="customer-name">Your Name:</label>
                 <input type="text" id="customer-name" placeholder="Enter your name">
+            </div>
+            
+            <div class="checkbox-group">
+                <input type="checkbox" id="preorder-checkbox">
+                <label for="preorder-checkbox">Did you pre-order? (10% discount)</label>
             </div>
             
             <div class="form-group">
@@ -365,6 +463,9 @@
     <script>
         let cart = [];
         let total = 0;
+        let subtotal = 0;
+        let discount = 0;
+        let finalTotal = 0;
         
         function addToCart(itemName, price) {
             const existingItem = cart.find(item => item.name === itemName);
@@ -380,6 +481,44 @@
             }
             
             updateCart();
+            updateQuantityDisplay(itemName);
+        }
+        
+        function updateQuantity(itemName, change) {
+            const existingItem = cart.find(item => item.name === itemName);
+            
+            if (existingItem) {
+                existingItem.quantity += change;
+                
+                if (existingItem.quantity <= 0) {
+                    cart = cart.filter(item => item.name !== itemName);
+                    hideQuantityControls(itemName);
+                }
+            }
+            
+            updateCart();
+            updateQuantityDisplay(itemName);
+        }
+        
+        function updateQuantityDisplay(itemName) {
+            const existingItem = cart.find(item => item.name === itemName);
+            const quantityDisplay = document.getElementById(`${itemName.toLowerCase().replace(' ', '-')}-quantity`);
+            
+            if (quantityDisplay) {
+                quantityDisplay.textContent = existingItem ? existingItem.quantity : 0;
+            }
+        }
+        
+        function hideQuantityControls(itemName) {
+            const controls = document.getElementById(`${itemName.toLowerCase().replace(' ', '-')}-controls`);
+            const btn = document.getElementById(`${itemName.toLowerCase().replace(' ', '-')}-btn`);
+            
+            if (controls) {
+                controls.style.display = 'none';
+            }
+            if (btn) {
+                btn.style.display = 'block';
+            }
         }
         
         function updateCart() {
@@ -387,11 +526,11 @@
             const totalElement = document.getElementById('cart-total');
             
             cartContainer.innerHTML = '';
-            total = 0;
+            subtotal = 0;
             
             cart.forEach(item => {
                 const itemTotal = item.price * item.quantity;
-                total += itemTotal;
+                subtotal += itemTotal;
                 
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
@@ -400,10 +539,30 @@
                     <span>₹${itemTotal}</span>
                 `;
                 cartContainer.appendChild(cartItem);
+                
+                // Show quantity controls for this item
+                const controls = document.getElementById(`${item.name.toLowerCase().replace(' ', '-')}-controls`);
+                const btn = document.getElementById(`${item.name.toLowerCase().replace(' ', '-')}-btn`);
+                
+                if (controls) {
+                    controls.style.display = 'flex';
+                }
+                if (btn) {
+                    btn.style.display = 'none';
+                }
             });
+            
+            // Calculate discount and final total
+            const preorderChecked = document.getElementById('preorder-checkbox').checked;
+            discount = preorderChecked ? subtotal * 0.1 : 0;
+            finalTotal = Math.ceil(subtotal - discount);
+            total = finalTotal;
             
             totalElement.textContent = `Total: ₹${total}`;
         }
+        
+        // Add event listener for preorder checkbox
+        document.getElementById('preorder-checkbox').addEventListener('change', updateCart);
         
         function processPayment() {
             const customerName = document.getElementById('customer-name').value.trim();
@@ -470,11 +629,28 @@
                 receiptItems.appendChild(receiptItem);
             });
             
-            // Add totals
-            receiptTotal.innerHTML = `
+            // Add totals with discount
+            const preorderChecked = document.getElementById('preorder-checkbox').checked;
+            let totalHTML = `
                 <div class="receipt-item">
                     <span>Subtotal:</span>
-                    <span>₹${total}</span>
+                    <span>₹${subtotal}</span>
+                </div>
+            `;
+            
+            if (preorderChecked) {
+                totalHTML += `
+                    <div class="receipt-item">
+                        <span>Pre-order Discount (10%):</span>
+                        <span>-₹${discount.toFixed(2)}</span>
+                    </div>
+                `;
+            }
+            
+            totalHTML += `
+                <div class="receipt-item">
+                    <span>Final Total (Rounded):</span>
+                    <span>₹${finalTotal}</span>
                 </div>
                 <div class="receipt-item">
                     <span>Amount Paid:</span>
@@ -485,6 +661,8 @@
                     <span>₹${change}</span>
                 </div>
             `;
+            
+            receiptTotal.innerHTML = totalHTML;
             
             // Add change breakdown
             let changeText = '<strong>Change Breakdown:</strong><br>';
