@@ -676,6 +676,24 @@
             receiptChange.innerHTML = changeText;
         }
         
+        function sendEmail() {
+            const receiptElement = document.getElementById('receipt');
+    
+            // Extract the receipt content
+            const customerName = document.getElementById('customer-name').value.trim();
+            const receiptText = receiptElement.innerText;
+
+            const subject = encodeURIComponent(`Receipt from Diya's Food Cart for ${customerName}`);
+            const body = encodeURIComponent(receiptText);
+            const emailAddress = "diyaagrawal1209@gmail.com";
+
+            // Construct mailto link
+            const mailtoLink = `mailto:${emailAddress}?subject=${subject}&body=${body}`;
+
+            // Open email client
+            window.location.href = mailtoLink;
+        }
+        
         function downloadReceipt() {
             const receiptElement = document.getElementById('receipt');
             
@@ -691,6 +709,7 @@
                 link.click();
             });
         }
+        <button class="download-btn" onclick="sendEmail()">Email Receipt</button>
     </script>
 </body>
 </html>
